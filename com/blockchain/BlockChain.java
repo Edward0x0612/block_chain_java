@@ -12,11 +12,11 @@ public class BlockChain {
     /**
      * 基于POW不断进行 sha256 Hash 运算
      * @param nickname
-     * @param num
+     * @param difficulty 难度系数
      * @throws Exception
      */
-    public static void proofOfWork(String nickname, int num) throws Exception {
-        if (num != 4 && num != 5) {
+    public static void proofOfWork(String nickname, int difficulty) throws Exception {
+        if (difficulty != 4 && difficulty != 5) {
             return;
         }
 
@@ -24,8 +24,9 @@ public class BlockChain {
         // 开始时间
         long begin = System.currentTimeMillis();
         String hash = calculateHashValue(nickname + nonce);
-        if (num == 4) {
-            while (!hash.startsWith("0000")) {
+        String target = new String(new char[difficulty]).replace('\0', '0');
+        if (difficulty == 4) {
+            while (!hash.startsWith(target)) {
                 nonce++;
                 hash = calculateHashValue(nickname + nonce);
             }
@@ -34,10 +35,10 @@ public class BlockChain {
             System.out.println("满足 4 个 0 开头的哈希值:"+ hash+", 共耗费"+(end - begin)+"ms");
 
             // 签名验证
-            boolean result = verifySignature(hash, nickname, num);
+            boolean result = verifySignature(hash, nickname, difficulty);
             System.out.println("验签结果:"+ result);
-        } else if (num == 5) {
-            while (!hash.startsWith("00000")) {
+        } else if (difficulty == 5) {
+            while (!hash.startsWith(target)) {
                 nonce++;
                 hash = calculateHashValue(nickname + nonce);
             }
